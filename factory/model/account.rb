@@ -1,3 +1,7 @@
+require_relative "../../model/account"
+
+AccountRecord = Model::Account::AccountRecord
+
 module Factory
   module Model
     class Account
@@ -27,17 +31,18 @@ module Factory
 
         # Returns a single account with the arguments passed, and fills everything else randomly.
         def build(account_number: nil, balance: nil)
-          account = []
-          if account_number.nil?
-            account.push(Account.generate_random_account_number)
+          account = AccountRecord.new
+
+          account.account_number = if account_number.nil?
+            Account.generate_random_account_number
           else
-            account.push(account_number)
+            account_number
           end
 
-          if balance.nil?
-            account.push(Account.generate_random_balance)
+          account.balance = if balance.nil?
+            Account.generate_random_balance
           else
-            account.push(balance)
+            balance
           end
 
           account
@@ -53,12 +58,17 @@ module Factory
           account_number = 0
           loop do
             account_number = Account.generate_random_account_number
-            if !used_account_numbers.include?(account_number)
+            unless used_account_numbers.include?(account_number)
               used_account_numbers.add(account_number)
               break
             end
           end
-          @accounts.push([account_number, Account.generate_random_balance])
+          @accounts.push(
+            AccountRecord.new(
+              account_number: account_number,
+              balance: Account.generate_random_balance
+            )
+          )
         end
       end
     end

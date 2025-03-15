@@ -49,18 +49,20 @@ RSpec.describe Model::Account do
   end
 
   describe "#balance_for" do
-    before(:each) do
-      @accounts = Model::Account.new(AccountFactory.generate(10))
-      @account = @accounts.sample
-    end
-
     it "outputs the balance of an account as a formatted string with 2 decimal places" do
-      expect(@accounts.balance_for(@account[:account_number].to_s))
-        .to eq(@account[:balance].to_s("F"))
+      account_record = AccountFactory.build(balance: "500.25")
+      account_number = account_record.account_number
+      account_data = [account_record]
+      account = subject.new(account_data)
+
+      expect(account.balance_for(account_number)).to eq("500.25")
     end
 
     it "returns nil if the account is not found" do
-      expect(@accounts.balance_for(1)).to eq(nil)
+      account_data = AccountFactory.generate(10)
+      account = subject.new(account_data)
+
+      expect(account.balance_for("this ID does not and should never exist")).to eq(nil)
     end
   end
 end

@@ -8,6 +8,10 @@ module Model
       all[all.keys[0]]
     end
 
+    def find(id)
+      repo[id]
+    end
+
     def sample
       all[all.keys.sample]
     end

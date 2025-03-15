@@ -3,6 +3,8 @@ require_relative "base"
 
 module Model
   class Account < Base
+    AccountRecord = Struct.new("AccountRecord", :account_number, :balance)
+
     class InvalidAccountNumberError < StandardError; end
 
     class DuplicateAccountError < StandardError; end
@@ -21,9 +23,7 @@ module Model
     end
 
     def balance_for(account_number)
-      if repo[account_number]
-        repo[account_number][:balance].to_s("F")
-      end
+      find(account_number)&.balance&.to_s("F")
     end
 
     private
@@ -35,7 +35,8 @@ module Model
       loaded_account_numbers = Set.new
 
       data.each do |account|
-        account_number, balance = account
+        account_number = account[0].to_s
+        balance = BigDecimal(account[1])
 
         if !balance_valid?(balance)
           raise InvalidBalanceError, "Starting balance for account #{account_number} must be greater than zero. Balance: #{balance}"
@@ -51,10 +52,10 @@ module Model
 
         loaded_account_numbers.add(account_number)
 
-        repo[account_number.to_s] = {
-          account_number: account_number.to_s,
-          balance: BigDecimal(balance)
-        }
+        repo[account_number] = AccountRecord.new(
+          account_number: account_number,
+          balance: balance
+        )
       end
     end
 
