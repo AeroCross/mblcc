@@ -1,6 +1,6 @@
 require_relative "../../model/account"
 
-AccountRecord = Model::Account::AccountRecord
+AccountRecord = Model::Account::Record
 
 module Factory
   module Model

@@ -22,7 +22,7 @@ RSpec.describe Model::Account do
     invalid_scenarios.each do |scenario|
       account_number, explanation = scenario
       account_data = [AccountFactory.build(account_number: account_number)]
-      it "raises a validation error because #{explanation}" do
+      it "raises an account number validation error because #{explanation}" do
         expect { subject.new(account_data) }.to raise_error(Validator::AccountValidator::InvalidAccountNumberError)
       end
     end

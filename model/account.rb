@@ -6,7 +6,7 @@ module Model
   class Account < Base
     class DuplicateAccountError < StandardError; end
 
-    AccountRecord = Struct.new("AccountRecord", :account_number, :balance) do
+    Record = Struct.new("AccountRecord", :account_number, :balance) do
       def initialize(account_number: nil, balance: nil)
         self.account_number = account_number
         self.balance = balance
@@ -50,7 +50,7 @@ module Model
 
       data.each do |account|
         account_number, balance = account
-        account_record = AccountRecord.new(
+        account_record = Record.new(
           account_number: account_number,
           balance: balance
         )
