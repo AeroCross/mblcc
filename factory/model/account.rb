@@ -18,13 +18,13 @@ module Factory
         end
 
         # For the purposes of testing, account balances are a string from 0 to 100k with 2 decimal numbers.
+        # In reality, account balances can be anything over 0.
         # This emulates the values loaded from a CSV file or similar, and it should be converted by the Model.
         def generate_random_balance
           format("%.2f", rand * 100000)
         end
 
         # Randomly generates accounts with balances.
-        # Returns an array of arrays containing a 16-character account number and its balance.
         def generate(number_of_accounts = 1)
           new(number_of_accounts).accounts
         end
@@ -45,7 +45,7 @@ module Factory
             balance
           end
 
-          account
+          account.to_a
         end
       end
 
@@ -53,7 +53,7 @@ module Factory
         @accounts = []
         used_account_numbers = Set.new
 
-        # Generate `number_of_accounts` ensuring that account numbers are unique.
+        # Generate `number_of_accounts` ensuring that account numbers are always unique.
         number_of_accounts.times do
           account_number = 0
           loop do
@@ -67,7 +67,7 @@ module Factory
             AccountRecord.new(
               account_number: account_number,
               balance: Account.generate_random_balance
-            )
+            ).to_a
           )
         end
       end

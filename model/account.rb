@@ -1,18 +1,32 @@
 require "bigdecimal"
 require_relative "base"
+require_relative "../validator/account_validator"
 
 module Model
   class Account < Base
-    AccountRecord = Struct.new("AccountRecord", :account_number, :balance)
-
-    class InvalidAccountNumberError < StandardError; end
-
     class DuplicateAccountError < StandardError; end
 
-    class InvalidBalanceError < StandardError; end
+    AccountRecord = Struct.new("AccountRecord", :account_number, :balance) do
+      def initialize(account_number: nil, balance: nil)
+        self.account_number = account_number
+        self.balance = balance
+        super
+      end
 
-    def initialize(data)
+      def account_number=(account_number)
+        self[:account_number] = account_number.to_s unless account_number.nil?
+      end
+
+      def balance=(balance)
+        self[:balance] = BigDecimal(balance) unless balance.nil?
+      end
+    end
+
+    attr_reader :validator
+
+    def initialize(data, validator = Validator::AccountValidator.new)
       @data = data
+      @validator = validator
       @repo = {}
       load
     end
@@ -35,37 +49,22 @@ module Model
       loaded_account_numbers = Set.new
 
       data.each do |account|
-        account_number = account[0].to_s
-        balance = BigDecimal(account[1])
-
-        if !balance_valid?(balance)
-          raise InvalidBalanceError, "Starting balance for account #{account_number} must be greater than zero. Balance: #{balance}"
-        end
-
-        if !account_number_valid?(account_number)
-          raise InvalidAccountNumberError, "Invalid format for account number \"#{account_number}\". Needs to be a 16-character string of digits 0-9."
-        end
-
-        if loaded_account_numbers.include?(account_number)
-          raise DuplicateAccountError, "Account number \"#{account_number}\" found multiple times while loading. Aborting to avoid overwriting balances."
-        end
-
-        loaded_account_numbers.add(account_number)
-
-        repo[account_number] = AccountRecord.new(
+        account_number, balance = account
+        account_record = AccountRecord.new(
           account_number: account_number,
           balance: balance
         )
+
+        validator.validate!(account_record)
+
+        if loaded_account_numbers.include?(account_record.account_number)
+          raise DuplicateAccountError, "Account number \"#{account_record.account_number}\" found multiple times while loading. Aborting to avoid overwriting balances."
+        end
+
+        loaded_account_numbers.add(account_record.account_number)
+
+        repo[account_record.account_number] = account_record
       end
-    end
-
-    def account_number_valid?(account_number)
-      # A valid account number is a 16-character string only containing digits 0-9.
-      account_number.to_s.match?(/^\d{16}$/)
-    end
-
-    def balance_valid?(balance)
-      BigDecimal(balance) >= 0
     end
   end
 end

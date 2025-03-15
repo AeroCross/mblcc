@@ -1,5 +1,6 @@
 require_relative "../../model/account"
 require_relative "../../factory/model/account"
+require_relative "../../validator/account_validator"
 
 AccountFactory = Factory::Model::Account
 
@@ -22,13 +23,13 @@ RSpec.describe Model::Account do
       account_number, explanation = scenario
       account_data = [AccountFactory.build(account_number: account_number)]
       it "raises a validation error because #{explanation}" do
-        expect { subject.new(account_data) }.to raise_error(Model::Account::InvalidAccountNumberError)
+        expect { subject.new(account_data) }.to raise_error(Validator::AccountValidator::InvalidAccountNumberError)
       end
     end
 
     it "prevents loading negative balances" do
       account_data = [AccountFactory.build(balance: "-15.20")]
-      expect { subject.new(account_data) }.to raise_error(Model::Account::InvalidBalanceError)
+      expect { subject.new(account_data) }.to raise_error(Validator::AccountValidator::InvalidBalanceError)
     end
 
     it "prevents loading duplicate account numbers" do
@@ -51,7 +52,7 @@ RSpec.describe Model::Account do
   describe "#balance_for" do
     it "outputs the balance of an account as a formatted string with 2 decimal places" do
       account_record = AccountFactory.build(balance: "500.25")
-      account_number = account_record.account_number
+      account_number = account_record[0]
       account_data = [account_record]
       account = subject.new(account_data)
 
