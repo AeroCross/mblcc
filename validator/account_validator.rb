@@ -1,8 +1,7 @@
-module Validator
-  class AccountValidator
-    class InvalidAccountNumberError < StandardError; end
+require_relative "base_validator"
 
-    class InvalidBalanceError < StandardError; end
+module Validator
+  class AccountValidator < BaseValidator
     attr_accessor :errors
 
     def initialize
@@ -21,16 +20,6 @@ module Validator
         errors.push(message)
         raise InvalidAccountNumberError, message
       end
-    end
-
-    # A valid account number is a 16-character string only containing digits 0-9.
-    def account_number_valid?(account_number)
-      account_number.match?(/^\d{16}$/)
-    end
-
-    # Any positive BigDecimal with 2 decimal points is valid.
-    def balance_valid?(balance)
-      BigDecimal(balance) >= 0
     end
   end
 end
