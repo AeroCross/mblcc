@@ -22,8 +22,6 @@ module Model
       end
     end
 
-    attr_reader :validator
-
     def initialize(data, validator = Validator::AccountValidator.new)
       @data = data
       @validator = validator
@@ -42,7 +40,7 @@ module Model
 
     private
 
-    attr_reader :data
+    attr_reader :data, :validator
     attr_accessor :repo
 
     def load
