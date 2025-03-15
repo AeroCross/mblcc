@@ -8,6 +8,12 @@ RSpec.describe Model::Account do
   subject(:account) { Model::Account }
 
   describe "#new" do
+    it "loads accounts" do
+      account_data = AccountFactory.generate(10)
+
+      expect(subject.new(account_data).all.length).to be(10)
+    end
+
     invalid_scenarios = [
       [12341324, "16 characters is the minimum length"],
       ["12341234123412341234", "16-characters is the maximum length"],
