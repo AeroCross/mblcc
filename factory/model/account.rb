@@ -34,13 +34,13 @@ module Factory
           account = AccountRecord.new
 
           account.account_number = if account_number.nil?
-            Account.generate_random_account_number
+            generate_random_account_number
           else
             account_number
           end
 
           account.balance = if balance.nil?
-            Account.generate_random_balance
+            generate_random_balance
           else
             balance
           end
@@ -57,7 +57,7 @@ module Factory
         number_of_accounts.times do
           account_number = 0
           loop do
-            account_number = Account.generate_random_account_number
+            account_number = self.class.generate_random_account_number
             unless used_account_numbers.include?(account_number)
               used_account_numbers.add(account_number)
               break
@@ -66,7 +66,7 @@ module Factory
           @accounts.push(
             AccountRecord.new(
               account_number: account_number,
-              balance: Account.generate_random_balance
+              balance: self.class.generate_random_balance
             ).to_a
           )
         end
