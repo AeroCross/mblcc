@@ -7,7 +7,7 @@ AccountFactory = Factory::Model::Account
 RSpec.describe Model::Account do
   subject(:account) { Model::Account }
 
-  describe "#load" do
+  describe "#new" do
     invalid_scenarios = [
       [12341324, "16 characters is the minimum length"],
       ["12341234123412341234", "16-characters is the maximum length"],
