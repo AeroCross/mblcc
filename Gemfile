@@ -5,7 +5,6 @@ gem "pry"
 
 gem "ruby-lsp"
 gem "rubocop", require: false
-gem "rubocop-rspec"
-gem "rubocop-performance"
-gem "rubocop-packaging"
+gem "rubocop-rspec", require: false
+gem "rubocop-performance", require: false
 gem "standard"
