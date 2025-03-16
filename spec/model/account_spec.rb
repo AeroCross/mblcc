@@ -40,7 +40,7 @@ RSpec.describe Model::Account do
       end
     end
 
-    context "balance is negative" do
+    context "when balance is negative" do
       it "prevents loading an account" do
         account_data.push(AccountFactory.build(balance: "-15.20"))
 
