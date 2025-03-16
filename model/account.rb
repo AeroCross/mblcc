@@ -10,7 +10,6 @@ module Model
       def initialize(account_number: nil, balance: nil)
         self.account_number = account_number
         self.balance = balance
-        super
       end
 
       def account_number=(account_number)

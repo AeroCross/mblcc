@@ -9,7 +9,6 @@ module Model
         self.from = from
         self.to = to
         self.amount = amount
-        super
       end
 
       def from=(account_number)
