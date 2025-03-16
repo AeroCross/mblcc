@@ -19,8 +19,15 @@ module Factory
     end
 
     # Same as `generate_random_balance`, but the value can't be 0.
-    def generate_random_amount
-      format("%.2f", rand(0.01...0.99) * 100000)
+    # To prevent "noops" due to insufficient funds, random amounts will be quite small more often than not (configurable).
+    def generate_random_amount(probablility_of_large_amount: 0.5)
+      factor = if rand < probablility_of_large_amount
+        100000
+      else
+        100
+      end
+
+      format("%.2f", rand(0.01...0.99) * factor)
     end
   end
 end
