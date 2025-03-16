@@ -1,43 +1,57 @@
 require_relative "../../model/transaction"
 require_relative "../../factory/model/transaction"
-require_relative "../../validator/transaction_validator"
-require "pry"
 
 TransactionFactory = Factory::Model::Transaction
 
 RSpec.describe Model::Transaction do
-  subject(:account) { Model::Transaction }
+  subject(:transaction_model) { Model::Transaction }
 
   describe "#new" do
+    let(:transaction_data) {
+      TransactionFactory
+        .generate(10)
+        .shuffle!
+    }
+
+    let(:transactions) { subject.new(transaction_data) }
+
     it "loads transactions" do
-      transaction_data = TransactionFactory.generate(10)
-
-      expect(subject.new(transaction_data).all.length).to eq(10)
+      expect(transactions.all.length).to eq(10)
     end
 
-    it "skips transactions if the amount is zero (i.e balance won't be modified)" do
-      transaction_data = TransactionFactory.generate(10)
-      transaction_data.push(TransactionFactory.build(amount: 0))
-      transaction_data.shuffle!
+    context "invalid scenarios" do
+      let(:amount) { "200.50" }
+      let(:to) { nil }
+      let(:from) { nil }
 
-      expect(subject.new(transaction_data).all.length).to eq(10)
-    end
+      before(:each) do
+        transaction_data.push(TransactionFactory.build(to: to, from: from, amount: amount))
+      end
 
-    it "skips transactions if the amount is lower than zero (i.e attempts to withdraw)" do
-      transaction_data = TransactionFactory.generate(10)
-      transaction_data.push(TransactionFactory.build(amount: "-10.00"))
-      transaction_data.shuffle!
+      context "when one of the amounts is zero (i.e balance won't be modified)" do
+        let(:amount) { "0" }
 
-      expect(subject.new(transaction_data).all.length).to eq(10)
-    end
+        it "skips transaction" do
+          expect(transactions.all.length).to eq(10)
+        end
+      end
 
-    it "skips transactions if it will attempt to transact with itself (i.e accounts are the same)" do
-      duplicate_account_number = TransactionFactory.generate_random_account_number
-      transaction_data = TransactionFactory.generate(10)
-      transaction_data.push(TransactionFactory.build(to: duplicate_account_number, from: duplicate_account_number))
-      transaction_data.shuffle!
+      context "when the amount is negative (i.e attempts to withdraw)" do
+        let(:amount) { "-15.20" }
 
-      expect(subject.new(transaction_data).all.length).to eq(10)
+        it "skips transaction" do
+          expect(subject.new(transaction_data).all.length).to eq(10)
+        end
+      end
+
+      context "when the source and destination accounts are the same" do
+        let(:to) { TransactionFactory.generate_random_account_number }
+        let(:from) { to }
+
+        it "skips transaction" do
+          expect(transactions.all.length).to eq(10)
+        end
+      end
     end
   end
 end
