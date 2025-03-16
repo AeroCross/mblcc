@@ -8,7 +8,22 @@ module Validator
 
     class InvalidBalanceError < ValidationError; end
 
+    attr_reader :errors
+
+    def initialize
+      @errors = []
+    end
+
     def valid?(record)
+      begin
+        validate!(record)
+      rescue ValidationError
+        return false
+      end
+      true
+    end
+
+    def validate!(record)
       raise NotImplementedError
     end
 
