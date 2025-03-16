@@ -27,6 +27,10 @@ module Validator
       raise NotImplementedError
     end
 
+    def errors?
+      errors.length > 0
+    end
+
     # A valid account number is a 16-character string only containing digits 0-9.
     def account_number_valid?(account_number)
       account_number.match?(/^\d{16}$/)

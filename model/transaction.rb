@@ -31,6 +31,14 @@ module Model
       load
     end
 
+    def errors?
+      validator.errors?
+    end
+
+    def errors
+      validator.errors
+    end
+
     private
 
     attr_reader :data, :validator
