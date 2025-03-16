@@ -11,7 +11,7 @@ module Factory
       attr_reader :transactions
 
       class << self
-        def build(from: nil, to: nil, amount: nil)
+        def build(from: nil, to: nil, amount: nil, record: false)
           transaction = TransactionRecord.new
 
           transaction.amount = if amount.nil?
@@ -36,6 +36,10 @@ module Factory
             end
           else
             to
+          end
+
+          if record
+            return transaction
           end
 
           transaction.to_a

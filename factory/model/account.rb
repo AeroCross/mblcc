@@ -17,7 +17,7 @@ module Factory
         end
 
         # Returns a single account with the arguments passed, and fills everything else randomly.
-        def build(account_number: nil, balance: nil)
+        def build(account_number: nil, balance: nil, record: false)
           account = AccountRecord.new
 
           account.account_number = if account_number.nil?
@@ -30,6 +30,10 @@ module Factory
             generate_random_balance
           else
             balance
+          end
+
+          if record
+            return account
           end
 
           account.to_a
