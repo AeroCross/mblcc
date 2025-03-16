@@ -2,12 +2,6 @@ require_relative "base_validator"
 
 module Validator
   class AccountValidator < BaseValidator
-    attr_accessor :errors
-
-    def initialize
-      @errors = []
-    end
-
     def validate!(account_record)
       if !balance_valid?(account_record.balance)
         message = "Starting balance for account #{account_record.account_number} must be greater than zero. Balance: #{account_record.balance}"

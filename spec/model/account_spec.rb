@@ -1,6 +1,5 @@
 require_relative "../../model/account"
 require_relative "../../factory/model/account"
-require_relative "../../validator/account_validator"
 
 AccountFactory = Factory::Model::Account
 
@@ -27,25 +26,29 @@ RSpec.describe Model::Account do
 
     invalid_scenarios.each do |scenario|
       account_number, explanation = scenario
-      account_data = [AccountFactory.build(account_number: account_number)]
-      it "raises an account number validation error because #{explanation}" do
-        expect { subject.new(account_data) }.to raise_error(Validator::AccountValidator::InvalidAccountNumberError)
+      account_data = AccountFactory.generate(10)
+      account_data.push(AccountFactory.build(account_number: account_number))
+
+      it "prevents loading an account number because #{explanation}" do
+        expect(subject.new(account_data).all.length).to eq(10)
       end
     end
 
     it "prevents loading negative balances" do
-      account_data = [AccountFactory.build(balance: "-15.20")]
-      expect { subject.new(account_data) }.to raise_error(Validator::AccountValidator::InvalidBalanceError)
+      account_data = AccountFactory.generate(10)
+      account_data.push(AccountFactory.build(balance: "-15.20"))
+
+      expect(subject.new(account_data).all.length).to eq(10)
     end
 
     it "prevents loading duplicate account numbers" do
       duplicate_account_number = AccountFactory.generate_random_account_number
-      account_data = [
-        AccountFactory.build(account_number: duplicate_account_number),
-        AccountFactory.build(account_number: duplicate_account_number)
-      ]
+      account_data = AccountFactory.generate(10)
 
-      expect { subject.new(account_data) }.to raise_error(Model::Account::DuplicateAccountError)
+      account_data.push(AccountFactory.build(account_number: duplicate_account_number))
+      account_data.push(AccountFactory.build(account_number: duplicate_account_number))
+
+      expect { subject.new(account_data) }.to raise_error(subject::DuplicateAccountError)
     end
   end
 
