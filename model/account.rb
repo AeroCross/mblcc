@@ -30,8 +30,20 @@ module Model
     end
 
     # Takes a transaction and applies them to the account.
-    def transact(transaction)
-      raise NotImplementedError
+    def transact(transaction_record)
+      source_account = find(transaction_record.from)
+      destination_account = find(transaction_record.to)
+
+      # Account not found
+      return false if source_account.nil? || destination_account.nil?
+
+      # Not enough balance
+      return false if source_account.balance < transaction_record.amount
+
+      source_account.balance -= transaction_record.amount
+      destination_account.balance += transaction_record.amount
+
+      true
     end
 
     def balance_for(account_number)
