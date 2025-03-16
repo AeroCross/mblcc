@@ -3,20 +3,6 @@ require_relative "base_validator"
 module Validator
   class TransactionValidator < BaseValidator
     class InvalidTargetsError < BaseValidator::ValidationError; end
-    attr_accessor :errors, :valid
-
-    def initialize
-      @errors = []
-    end
-
-    def valid?(transaction_record)
-      begin
-        validate!(transaction_record)
-      rescue ValidationError
-        return false
-      end
-      true
-    end
 
     def validate!(transaction_record)
       if !amount_valid?(transaction_record.amount)
