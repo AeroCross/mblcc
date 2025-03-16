@@ -1,7 +1,9 @@
 require_relative "../../model/account"
 require_relative "../../factory/model/account"
+require_relative "../../factory/model/transaction"
 
 AccountFactory = Factory::Model::Account
+TransactionFactory = Factory::Model::Transaction
 
 RSpec.describe Model::Account do
   subject(:account) { Model::Account }
@@ -53,9 +55,62 @@ RSpec.describe Model::Account do
   end
 
   describe "#transact" do
-    it "processes transactions"
-    it "prevents a balance from going below zero"
-    it "ensures that both account exist when transacting"
+    it "processes transactions" do
+      source_account = AccountFactory.build(balance: "500.25", record: true)
+      destination_account = AccountFactory.build(balance: "200.86", record: true)
+      account_data = [source_account.to_a, destination_account.to_a]
+
+      transaction = TransactionFactory.build(
+        from: source_account.account_number,
+        to: destination_account.account_number,
+        amount: "100.12",
+        record: true
+      )
+
+      accounts = subject.new(account_data)
+      accounts.transact(transaction)
+
+      expect(accounts.balance_for(source_account.account_number)).to eq("400.13")
+      expect(accounts.balance_for(destination_account.account_number)).to eq("300.98")
+    end
+
+    it "prevents a balance from going below zero by aborting the transaction" do
+      source_account = AccountFactory.build(balance: "10.40", record: true)
+      destination_account = AccountFactory.build(balance: "200", record: true)
+      account_data = [source_account.to_a, destination_account.to_a]
+
+      transaction = TransactionFactory.build(
+        from: source_account.account_number,
+        to: destination_account.account_number,
+        amount: "1499.99",
+        record: true
+      )
+
+      accounts = subject.new(account_data)
+      accounts.transact(transaction)
+
+      expect(accounts.balance_for(source_account.account_number)).to eq("10.40")
+      expect(accounts.balance_for(destination_account.account_number)).to eq("200.00")
+    end
+
+    it "ensures that both account exist when transacting" do
+      source_account = AccountFactory.build(balance: "1999", record: true)
+      destination_account = AccountFactory.build(balance: "140.2", record: true)
+      account_data = [source_account.to_a, destination_account.to_a]
+
+      transaction = TransactionFactory.build(
+        from: "nah",
+        to: destination_account.account_number,
+        amount: "125.33",
+        record: true
+      )
+
+      accounts = subject.new(account_data)
+      accounts.transact(transaction)
+
+      expect(accounts.balance_for(source_account.account_number)).to eq("1999.00")
+      expect(accounts.balance_for(destination_account.account_number)).to eq("140.20")
+    end
   end
 
   describe "#balance_for" do
