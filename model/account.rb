@@ -47,7 +47,10 @@ module Model
     end
 
     def balance_for(account_number)
-      find(account_number)&.balance&.to_s("F")
+      account = find(account_number)
+      if account
+        format_balance(account.balance)
+      end
     end
 
     private
@@ -73,6 +76,10 @@ module Model
 
         repo[account_record.account_number] = account_record if validator.valid?(account_record)
       end
+    end
+
+    def format_balance(balance)
+      format("%.2f", balance)
     end
   end
 end
