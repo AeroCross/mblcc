@@ -23,7 +23,7 @@ RSpec.describe Model::Transaction do
       expect(subject.new(transaction_data).all.length).to eq(10)
     end
 
-    it "prevents loading transactions if the amount is lower than zero (i.e attempts to withdraw)" do
+    it "skips transactions if the amount is lower than zero (i.e attempts to withdraw)" do
       transaction_data = TransactionFactory.generate(10)
       transaction_data.push(TransactionFactory.build(amount: "-10.00"))
       transaction_data.shuffle!
@@ -31,7 +31,7 @@ RSpec.describe Model::Transaction do
       expect(subject.new(transaction_data).all.length).to eq(10)
     end
 
-    it "prevents loading transactions if it will attempt to transact with itself (i.e accounts are the same)" do
+    it "skips transactions if it will attempt to transact with itself (i.e accounts are the same)" do
       duplicate_account_number = TransactionFactory.generate_random_account_number
       transaction_data = TransactionFactory.generate(10)
       transaction_data.push(TransactionFactory.build(to: duplicate_account_number, from: duplicate_account_number))
