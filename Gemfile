@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "rspec"
 gem "pry"
+gem "csv"
 
 gem "ruby-lsp"
 gem "rubocop", require: false
