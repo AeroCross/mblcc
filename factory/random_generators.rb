@@ -1,5 +1,5 @@
+# Provides methods to generate useful random data.
 module Factory
-  # Helper functions for factory creation.
   module RandomGenerators
     # Account numbers are always a 16-character string comprised of digits 0-9.
     def generate_random_account_number
