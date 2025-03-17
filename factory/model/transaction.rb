@@ -1,8 +1,6 @@
 require_relative "../../model/transaction"
 require_relative "../random_generators"
 
-TransactionRecord = Model::Transaction::Record
-
 module Factory
   module Model
     class Transaction
@@ -12,7 +10,7 @@ module Factory
 
       class << self
         def build(from: nil, to: nil, amount: nil, record: false)
-          transaction = TransactionRecord.new
+          transaction = ::Model::Transaction::Record.new
 
           transaction.amount = if amount.nil?
             generate_random_amount

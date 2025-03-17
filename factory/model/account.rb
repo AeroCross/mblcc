@@ -1,8 +1,6 @@
 require_relative "../../model/account"
 require_relative "../random_generators"
 
-AccountRecord = Model::Account::Record
-
 module Factory
   module Model
     class Account
@@ -18,7 +16,7 @@ module Factory
 
         # Returns a single account with the arguments passed, and fills everything else randomly.
         def build(account_number: nil, balance: nil, record: false)
-          account = AccountRecord.new
+          account = ::Model::Account::Record.new
 
           account.account_number = if account_number.nil?
             generate_random_account_number

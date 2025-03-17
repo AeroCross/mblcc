@@ -1,14 +1,12 @@
 require_relative "../../model/transaction"
 require_relative "../../factory/model/transaction"
 
-TransactionFactory = Factory::Model::Transaction
-
-RSpec.describe Model::Transaction do
-  subject(:transaction_model) { Model::Transaction }
+RSpec.describe ::Model::Transaction do
+  subject(:transaction_model) { ::Model::Transaction }
 
   describe "#new" do
     let(:transaction_data) {
-      TransactionFactory
+      Factory::Model::Transaction
         .generate(10)
         .shuffle!
     }
@@ -25,7 +23,7 @@ RSpec.describe Model::Transaction do
       let(:from) { nil }
 
       before(:each) do
-        transaction_data.push(TransactionFactory.build(to: to, from: from, amount: amount))
+        transaction_data.push(Factory::Model::Transaction.build(to: to, from: from, amount: amount))
       end
 
       context "when one of the amounts is zero (i.e balance won't be modified)" do
@@ -45,7 +43,7 @@ RSpec.describe Model::Transaction do
       end
 
       context "when the source and destination accounts are the same" do
-        let(:to) { TransactionFactory.generate_random_account_number }
+        let(:to) { Factory::Model::Transaction.generate_random_account_number }
         let(:from) { to }
 
         it "skips transaction" do
