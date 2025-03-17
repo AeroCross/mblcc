@@ -9,7 +9,7 @@ module Model
     end
 
     def find(id)
-      repo[id]
+      repo[id.to_sym]
     end
 
     def sample

@@ -81,7 +81,7 @@ module Model
 
         loaded_account_numbers.add(account_record.account_number)
 
-        repo[account_record.account_number] = account_record if validator.valid?(account_record)
+        repo[account_record.account_number.to_sym] = account_record if validator.valid?(account_record)
       end
     end
 
