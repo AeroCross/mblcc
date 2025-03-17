@@ -24,7 +24,7 @@ environment (due to missing libraries, incompatible arch, etc.).
 Reach out if you have issues running the app.
 
 ```
-# Install ruby 3.4.2 with your version manager of choise
+# Install ruby 3.4.2 with your version manager of choice
 # I use mise: https://mise.jdx.dev/lang/ruby.html
 mise use -g ruby@3.4
 
