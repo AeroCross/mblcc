@@ -3,7 +3,7 @@ require_relative "../random_generators"
 
 module Factory
   module Model
-    class Transaction
+    class TransactionFactory
       extend RandomGenerators
 
       attr_reader :transactions

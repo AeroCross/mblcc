@@ -1,12 +1,12 @@
 require_relative "../../model/account"
-require_relative "../../factory/model/account"
-require_relative "../../factory/model/transaction"
+require_relative "../../factory/model/account_factory"
+require_relative "../../factory/model/transaction_factory"
 
-RSpec.describe ::Model::Account do
-  subject(:account_model) { ::Model::Account }
+RSpec.describe Model::Account do
+  subject(:account_model) { Model::Account }
 
   describe "#new" do
-    let(:account_data) { Factory::Model::Account.generate(10) }
+    let(:account_data) { Factory::Model::AccountFactory.generate(10) }
     let(:account) { subject.new(account_data) }
 
     it "loads accounts" do
@@ -29,7 +29,7 @@ RSpec.describe ::Model::Account do
         account_number, explanation = scenario
         context "when #{explanation}" do
           it "prevents loading an account" do
-            account_data.push(Factory::Model::Account.build(account_number: account_number))
+            account_data.push(Factory::Model::AccountFactory.build(account_number: account_number))
 
             expect(account.all.length).to eq(10)
           end
@@ -39,7 +39,7 @@ RSpec.describe ::Model::Account do
 
     context "when balance is negative" do
       it "prevents loading an account" do
-        account_data.push(Factory::Model::Account.build(balance: "-15.20"))
+        account_data.push(Factory::Model::AccountFactory.build(balance: "-15.20"))
 
         expect(account.all.length).to eq(10)
       end
@@ -47,9 +47,9 @@ RSpec.describe ::Model::Account do
 
     context "when there are duplicate accounts" do
       it "prevents loading an account" do
-        duplicate_account_number = Factory::Model::Account.generate_random_account_number
-        account_data.push(Factory::Model::Account.build(account_number: duplicate_account_number))
-        account_data.push(Factory::Model::Account.build(account_number: duplicate_account_number))
+        duplicate_account_number = Factory::Model::AccountFactory.generate_random_account_number
+        account_data.push(Factory::Model::AccountFactory.build(account_number: duplicate_account_number))
+        account_data.push(Factory::Model::AccountFactory.build(account_number: duplicate_account_number))
 
         expect { subject.new(account_data) }.to raise_error(subject::DuplicateAccountError)
       end
@@ -57,13 +57,13 @@ RSpec.describe ::Model::Account do
   end
 
   describe "#transact" do
-    let(:source_account) { Factory::Model::Account.build(balance: source_balance, record: true) }
-    let(:destination_account) { Factory::Model::Account.build(balance: destination_balance, record: true) }
+    let(:source_account) { Factory::Model::AccountFactory.build(balance: source_balance, record: true) }
+    let(:destination_account) { Factory::Model::AccountFactory.build(balance: destination_balance, record: true) }
     let(:account_data) { [source_account.to_a, destination_account.to_a] }
     let(:accounts) { subject.new(account_data) }
 
     let(:transaction) {
-      Factory::Model::Transaction.build(
+      Factory::Model::TransactionFactory.build(
         from: source_account.account_number,
         to: destination_account.account_number,
         amount: transaction_amount,
@@ -107,7 +107,7 @@ RSpec.describe ::Model::Account do
 
       context "when the source account does not exist" do
         let(:transaction) {
-          Factory::Model::Transaction.build(
+          Factory::Model::TransactionFactory.build(
             from: "nah",
             to: destination_account.account_number,
             amount: transaction_amount,
@@ -124,7 +124,7 @@ RSpec.describe ::Model::Account do
 
       context "when the destination account does not exist" do
         let(:transaction) {
-          Factory::Model::Transaction.build(
+          Factory::Model::TransactionFactory.build(
             from: source_account.account_number,
             to: "yeah nah",
             amount: transaction_amount,
@@ -142,7 +142,7 @@ RSpec.describe ::Model::Account do
   end
 
   describe "#balance_for" do
-    let(:account_record) { Factory::Model::Account.build(balance: balance, record: true) }
+    let(:account_record) { Factory::Model::AccountFactory.build(balance: balance, record: true) }
     let(:account_data) { [account_record.to_a] }
     let(:account) { subject.new(account_data) }
 
@@ -182,7 +182,7 @@ RSpec.describe ::Model::Account do
     end
 
     context "when the account is not found" do
-      let(:account_data) { Factory::Model::Account.generate(10) }
+      let(:account_data) { Factory::Model::AccountFactory.generate(10) }
       it "returns nil" do
         expect(account.balance_for("this ID does not and should never exist")).to eq(nil)
       end

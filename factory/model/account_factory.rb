@@ -3,7 +3,7 @@ require_relative "../random_generators"
 
 module Factory
   module Model
-    class Account
+    class AccountFactory
       extend RandomGenerators
 
       attr_reader :accounts

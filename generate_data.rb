@@ -1,7 +1,7 @@
 require "pry"
 require "csv"
-require_relative "factory/model/account"
-require_relative "factory/model/transaction"
+require_relative "factory/model/account_factory"
+require_relative "factory/model/transaction_factory"
 
 # BEGIN Script configuration
 # How many accounts should there be?
@@ -19,12 +19,12 @@ MAXIMUM_TRANSACTIONS_PER_ACCOUNT = 3
 # ####
 TRANSACTION_RANGE_PER_ACCOUNT = MINIMUM_TRANSACTIONS_PER_ACCOUNT...MAXIMUM_TRANSACTIONS_PER_ACCOUNT
 
-account_data = Factory::Model::Account.generate(NUMBER_OF_ACCOUNTS)
+account_data = Factory::Model::AccountFactory.generate(NUMBER_OF_ACCOUNTS)
 transaction_data = []
 
 account_data.each do |account_number, balance|
   rand(TRANSACTION_RANGE_PER_ACCOUNT).times do
-    transaction_data.push(Factory::Model::Transaction.build(from: account_number, to: account_data.sample[0]))
+    transaction_data.push(Factory::Model::TransactionFactory.build(from: account_number, to: account_data.sample[0]))
   end
 end
 
