@@ -28,7 +28,7 @@ module Model
       load
     end
 
-    # Takes a transaction and applies them to the account.
+    # Takes a transaction and applies it to the account.
     def transact(transaction_record)
       source_account = find(transaction_record.from)
       destination_account = find(transaction_record.to)
